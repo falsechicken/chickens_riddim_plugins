@@ -35,7 +35,6 @@ end
 function Reboot(_command)
   
   if CheckPermissions(_command) == true then
-    print("perm checsk");
     logMan.LogMessage("Reboot command called by ".._command.sender["jid"], 1);
     _command:reply("Catch ya on the flip side!");
     rebootQueued = true;
