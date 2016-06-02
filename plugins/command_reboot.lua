@@ -12,33 +12,39 @@ local perms = require("riddim/ai_utils/permissions");
 local rebootQueued = false;
 local BOT = nil;
 
+local CheckPermissions = function(_command)
+  if _command.stanza.attr.type == "groupchat" then -- We need to check slightly differently if we are in group chat currently.
+    if perms.HasPermission(_command.sender["jid"], "reboot", BOT.config.permissions) then -- User has permission.;
+      return true;
+    end
+    return false;
+  else
+    if perms.HasPermission(jidTool.StripResourceFromJID(_command.sender["jid"]), "reboot", BOT.config.permissions) then -- User has permission.
+      return true;
+    end
+    return false;
+  end
+end
+
 function riddim.plugins.command_reboot(_bot)
 	_bot:hook("commands/reboot", Reboot);
 	timer.add_task(2, CheckRebootQueue);
 	BOT = _bot;
 end
 
-function Reboot(command)
+function Reboot(_command)
   
-  if command.stanza.attr.type == "groupchat" then -- We need to check slightly differently if we are in group chat currently.
-    if perms.HasPermission(command.sender["jid"], "reboot", BOT.config.permissions) then -- User has permission.
-      logMan.LogMessage("Reboot command called by "..command.sender["jid"], 1);
-      command:reply("Catch ya on the flip side!");
-      rebootQueued = true;
-      return;
-    end
+  if CheckPermissions(_command) == true then
+    print("perm checsk");
+    logMan.LogMessage("Reboot command called by ".._command.sender["jid"], 1);
+    _command:reply("Catch ya on the flip side!");
+    rebootQueued = true;
+    return true;
   end
   
-  if perms.HasPermission(jidTool.StripResourceFromJID(command.sender["jid"]), "reboot", BOT.config.permissions) then -- User has permission.
-    logMan.LogMessage("Reboot command called by "..jidTool.StripResourceFromJID(command.sender["jid"]), 1);
-    command:reply("Catch ya on the flip side!");
-    rebootQueued = true;
-    return;
-	end
-  
-  logMan.LogMessage("Unauthorized user "..command.sender["jid"].." attempted reboot!", 2);
-  command:reply("You are not authorized to run this command.");
-  return;
+  logMan.LogMessage("Unauthorized user ".._command.sender["jid"].." attempted reboot!", 2);
+  _command:reply("You are not authorized to run this command.");
+  return false;
 
 end
 
@@ -48,3 +54,4 @@ function CheckRebootQueue() -- Work around using a timer and bool. Reply message
 	end
 	return 2;
 end
+
