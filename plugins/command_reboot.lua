@@ -32,8 +32,8 @@ function riddim.plugins.command_reboot(_bot)
 	BOT = _bot;
 end
 
-function Reboot(_command)
-  
+function Reboot(_command)  
+    
   if CheckPermissions(_command) == true then
     logMan.LogMessage("Reboot command called by ".._command.sender["jid"], 1);
     _command:reply("Catch ya on the flip side!");
@@ -53,4 +53,3 @@ function CheckRebootQueue() -- Work around using a timer and bool. Reply message
 	end
 	return 2;
 end
-

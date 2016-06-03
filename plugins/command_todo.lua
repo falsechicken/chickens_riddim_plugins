@@ -3,9 +3,10 @@ Command_Todo
 Allows users to store and show a todo list.
 --]]
 
-local datamanager = require "util.datamanager";
-local timer = require "util.timer";
-local jidTool = require "riddim/ai_utils/jid_tool";
+local datamanager = require("util.datamanager");
+local timer = require("util.timer");
+local jidTool = require("riddim/ai_utils/jid_tool");
+local stanzaUtils = require("riddim/ai_utils/stanzautils");
 
 function riddim.plugins.command_todo(bot)
 	bot:hook("commands/todoadd", ParseAddCommand);
@@ -17,9 +18,9 @@ end
 -- Command Parsers
 
 function ParseAddCommand(command)
-
-	if command.stanza.attr.type == 'groupchat' then return; end
-	
+  
+  if stanzaUtils.IsGroupChat(command) then return; end -- Ignore message from MUC rooms.
+  
 	if command.param == nil then return "Missing todo. @todo for help."; end
 	
 	local jid, host, resource = jidTool.SeperateFullJID(command.sender["jid"]);
@@ -40,7 +41,7 @@ end
 
 function ParseShowCommand(command)
 
-	if command.stanza.attr.type == 'groupchat' then return; end
+  if stanzaUtils.IsGroupChat(command) then return; end -- Ignore message from MUC rooms.
 	
 	local jid, host, resource = jidTool.SeperateFullJID(command.sender["jid"]);
 	
@@ -58,8 +59,8 @@ function ParseShowCommand(command)
 end
 
 function ParseRemoveCommand(command)
-
-	if command.stanza.attr.type == 'groupchat' then return; end
+  
+  if stanzaUtils.IsGroupChat(command) then return; end -- Ignore message from MUC rooms.
 	
 	if command.param == nil then return "Missing todo number. @todo for help."; end
 	
@@ -78,8 +79,8 @@ function ParseRemoveCommand(command)
 end
 
 function ParseHelpCommand(command)
-
-  if command.stanza.attr.type == 'groupchat' then return; end
+  
+  if stanzaUtils.IsGroupChat(command) then return; end -- Ignore message from MUC rooms.
   
   local reply = "\n"..[[- Todo Command Help -
    - @todo - Show help message.
