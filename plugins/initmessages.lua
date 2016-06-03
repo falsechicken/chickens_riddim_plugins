@@ -3,7 +3,9 @@
 local logMan = require("riddim/ai_utils/logman");
 
 function riddim.plugins.initmessages(bot)
-	logMan.LogMessage("## "..bot.config.nick.." Initializing ##", 1);
+	print("");
+  
+  logMan.LogMessage("## "..bot.config.nick.." Initializing ##", 1);
 	
 	print("");
 	logMan.LogMessage("## Riddim Plug-ins Enabled ##", 1);

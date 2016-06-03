@@ -1,5 +1,5 @@
 --[[
-Reboot
+Command_Reboot
 Used with a external script in a loop that will restart the bot after exiting. If this script does not exist the bot will simply exit.
 --]]
 
