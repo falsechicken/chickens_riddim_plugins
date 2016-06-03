@@ -34,6 +34,6 @@ function CheckConfigHash(_event)
 end
 
 function RebootBot()
-  logMan.LogMessage("Config change detected. Restarting "..BOT.config.nick, 1);
+  logMan.LogMessage("Config change detected. Restarting "..BOT.config.nick..".", 1);
   os.exit();
 end
