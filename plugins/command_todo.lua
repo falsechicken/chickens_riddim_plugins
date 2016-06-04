@@ -69,7 +69,7 @@ function ParseRemoveCommand(command)
 	
 	local todoStorage = datamanager.load(jid, host, "todos");
   
-  if tableUtils.DoesTableContainKey(tonumber(command.param), todoStorage) == false then return "Todo does not exist."; end
+  if tableUtils.DoesTableContainKey(command.param, todoStorage) == false then return "Todo does not exist."; end
   
   if todoStorage == nil then return "No todos set."; end
 	
