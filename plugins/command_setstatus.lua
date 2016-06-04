@@ -31,10 +31,18 @@ function riddim.plugins.command_setstatus(_bot)
 end
 
 function SetStatus(_command)
-
 	
 	if CheckPermissions(_command) then
+		if _command.param == "$DEFAULT" then
+			if BOT.config.default_status == nil then _command:reply("No default status in config."); return; end
+		
+			BOT.stream:set_status({ msg = BOT.config.default_status });
+			return;
+		end
+		
 		BOT.stream:set_status({ msg = _command.param });
+		return;
+	
 	else
 		_command:reply("You are not authorized to set status.");
 	end
