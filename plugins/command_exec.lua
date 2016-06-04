@@ -32,6 +32,7 @@ end
 function ParseExecCommand(_command)
 
 	if CheckPermissions(_command) then
+		if _command.param == nil then _command:reply("Missing argument. Usage: @exec <Statement or Function>"); return; end
 		local f = loadstring(_command.param);
 		local r, e = pcall(f);
 		if r then _command:reply(tostring(e));
