@@ -20,6 +20,7 @@ function riddim.plugins.auto_conf_reload(_bot)
   
   local handle = io.popen("md5sum -t config.lua");
   initialMD5 = handle:read("*a");
+  handle:close();
   
 end
 
