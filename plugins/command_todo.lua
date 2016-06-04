@@ -7,6 +7,7 @@ local datamanager = require("util.datamanager");
 local timer = require("util.timer");
 local jidTool = require("riddim/ai_utils/jid_tool");
 local stanzaUtils = require("riddim/ai_utils/stanzautils");
+local tableUtils = require("riddim/ai_utils/tableutils");
 
 function riddim.plugins.command_todo(bot)
 	bot:hook("commands/todoadd", ParseAddCommand);
@@ -59,7 +60,7 @@ function ParseShowCommand(command)
 end
 
 function ParseRemoveCommand(command)
-  
+    
   if stanzaUtils.IsGroupChat(command) then return; end -- Ignore message from MUC rooms.
 	
 	if command.param == nil then return "Missing todo number. @todo for help."; end
@@ -67,10 +68,12 @@ function ParseRemoveCommand(command)
 	local jid, host, resource = jidTool.SeperateFullJID(command.sender["jid"]);
 	
 	local todoStorage = datamanager.load(jid, host, "todos");
-		
-	if todoStorage == nil then return "No todos set."; end
+  
+  if tableUtils.DoesTableContainKey(tonumber(command.param), todoStorage) == false then return "Todo does not exist."; end
+  
+  if todoStorage == nil then return "No todos set."; end
 	
-	table.remove(todoStorage, command.param);
+  table.remove(todoStorage, command.param);
 	
 	datamanager.store(jid, host, "todos", todoStorage);
 	

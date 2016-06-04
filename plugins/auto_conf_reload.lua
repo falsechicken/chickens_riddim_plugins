@@ -27,6 +27,7 @@ function CheckConfigHash(_event)
   
   local handle = io.popen("md5sum -t config.lua");
   local currentMD5 = handle:read("*a");
+  handle:close();
   
   if currentMD5 ~= initialMD5 then RebootBot(); end
   
