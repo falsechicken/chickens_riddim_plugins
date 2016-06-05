@@ -43,6 +43,7 @@ function ParsePermsCommand(_command)
 			permsList = "\n-- Your Permissions In Room --";
 		else
 			tempPersonalPerms = BOT.config.permissions[jid_tool.StripResourceFromJID(_command.sender["jid"])];
+			if tempPersonalPerms == nil then tempPersonalPerms = {}; end
 			permsList = "\n-- Your Permissions --";
 		end
 		
