@@ -39,6 +39,7 @@ function ParsePermsCommand(_command)
 		
 		if _command.stanza.attr.type == "groupchat" then
 			tempPersonalPerms = BOT.config.permissions[_command.sender["jid"]];
+			if tempPersonalPerms == nil then tempPersonalPerms = {}; end;
 			permsList = "\n-- Your Permissions In Room --";
 		else
 			tempPersonalPerms = BOT.config.permissions[jid_tool.StripResourceFromJID(_command.sender["jid"])];
@@ -46,6 +47,7 @@ function ParsePermsCommand(_command)
 		end
 		
 		tempDefaultPerms = BOT.config.permissions["DEFAULT"];
+		if tempDefaultPerms == nil then tempDefaultPerms = {}; end;
 		
 		for pk, personalPermission in pairs(tempPersonalPerms) do
 			for dk, defaultPermission in pairs(tempDefaultPerms) do
