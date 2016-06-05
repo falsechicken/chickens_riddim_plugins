@@ -33,22 +33,39 @@ function ParsePermsCommand(_command)
 
 	if CheckPermissions(_command) then
 		local permsList;
+		
+		local tempPersonalPerms = {};
+		local tempDefaultPerms = {};
+		
 		if _command.stanza.attr.type == "groupchat" then
+			tempPersonalPerms = BOT.config.permissions[_command.sender["jid"]];
 			permsList = "\n-- Your Permissions In Room --";
-			for key, permission in pairs(BOT.config.permissions[_command.sender["jid"]]) do
-				permsList = permsList.."\n - "..permission;
-			end
-			permsList = permsList.."\n--------------------------------------";
-			return permsList;
 		else
+			tempPersonalPerms = BOT.config.permissions[jid_tool.StripResourceFromJID(_command.sender["jid"])];
 			permsList = "\n-- Your Permissions --";
-			for key, permission in pairs(BOT.config.permissions[jid_tool.StripResourceFromJID(_command.sender["jid"])]) do
-				permsList = permsList.."\n - "..permission;
-			end
-			permsList = permsList.."\n--------------------------------";
-			return permsList;
 		end
-	else
+		
+		tempDefaultPerms = BOT.config.permissions["DEFAULT"];
+		
+		for pk, personalPermission in pairs(tempPersonalPerms) do
+			for dk, defaultPermission in pairs(tempDefaultPerms) do
+				if personalPermission == defaultPermission then tempPersonalPerms[pk] = nil; end -- Remove default permission from personal list.
+			end
+		end
+		
+		for dk, defaultPermission in pairs(tempDefaultPerms) do 
+			table.insert(tempPersonalPerms, defaultPermission); -- Add all the default permissions to the personal permission table now that dupes should not exist.
+		end
+			
+		for key, permission in pairs(tempPersonalPerms) do
+			permsList = permsList.."\n - "..permission;
+		end
+		
+		permsList = permsList.."\n--------------------------------";
+		
+		return permsList;
+		
+	else	
 		return "You are not authorized to run this command.";
 	end
 end
