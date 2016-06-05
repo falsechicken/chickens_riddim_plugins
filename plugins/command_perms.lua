@@ -6,6 +6,7 @@ Licensed Under the GPLv2
 
 local permissions = require("riddim/ai_utils/permissions");
 local jid_tool = require("riddim/ai_utils/jid_tool");
+local tableUtils = require("riddim/ai_utils/tableutils");
 
 
 local BOT;
@@ -50,16 +51,10 @@ function ParsePermsCommand(_command)
 		tempDefaultPerms = BOT.config.permissions["DEFAULT"];
 		if tempDefaultPerms == nil then tempDefaultPerms = {}; end;
 		
-		for pk, personalPermission in pairs(tempPersonalPerms) do
-			for dk, defaultPermission in pairs(tempDefaultPerms) do
-				if personalPermission == defaultPermission then tempPersonalPerms[pk] = nil; end -- Remove default permission from personal list.
-			end
-		end
+		tempPersonalPerms = tableUtils.RemoveDupeValues(tempPersonalPerms, tempDefaultPerms); -- Remove dupe entries as to not print default permissions twice.
 		
-		for dk, defaultPermission in pairs(tempDefaultPerms) do 
-			table.insert(tempPersonalPerms, defaultPermission); -- Add all the default permissions to the personal permission table now that dupes should not exist.
-		end
-			
+		tempPersonalPerms = tableUtils.JoinTables(tempPersonalPerms, tempDefaultPerms);
+		
 		for key, permission in pairs(tempPersonalPerms) do
 			permsList = permsList.."\n - "..permission;
 		end
