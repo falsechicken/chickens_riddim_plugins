@@ -32,18 +32,20 @@ end
 function ParsePermsCommand(_command)
 
 	if CheckPermissions(_command) then
-		local permsList = "\n-- Your Permissions --";
+		local permsList;
 		if _command.stanza.attr.type == "groupchat" then
+			permsList = "\n-- Your Permissions In Room --";
 			for key, permission in pairs(BOT.config.permissions[_command.sender["jid"]]) do
 				permsList = permsList.."\n - "..permission;
 			end
-			permsList = permsList.."\n----------------";
+			permsList = permsList.."\n--------------------------------------";
 			return permsList;
 		else
+			permsList = "\n-- Your Permissions --";
 			for key, permission in pairs(BOT.config.permissions[jid_tool.StripResourceFromJID(_command.sender["jid"])]) do
 				permsList = permsList.."\n - "..permission;
 			end
-			permsList = permsList.."\n----------------";
+			permsList = permsList.."\n--------------------------------";
 			return permsList;
 		end
 	else

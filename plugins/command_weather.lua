@@ -9,6 +9,10 @@ local tableUtils = require("riddim/ai_utils/tableutils");
 
 local BOT;
 
+local groupChatMessage = "This command cannot be used in group chat.";
+
+local zipMissingMessage = "I don't know your zip code! Set it with: @weatherset <Zip Code> (U.S. only)."
+
 function riddim.plugins.command_weather(_bot)
 	_bot:hook("commands/weather", ParseWeatherCommand);
 	_bot:hook("commands/forecast", ParseForecastCommand);
@@ -18,13 +22,13 @@ end
 
 function ParseWeatherCommand(_command)
 
-	if stanzaUtils.IsGroupChat(_command) then return "This command cannot be used in group chat."; end
+	if stanzaUtils.IsGroupChat(_command) then return groupChatMessage; end
 	
 	local jid, host, resource = jidTool.SeperateFullJID(_command.sender["jid"]);
 	
 	local zipStorage = datamanager.load(jid, host, "weatherZip");
 	
-	if zipStorage == nil then return "I don't know your zip code! Set it with: @weatherset <Zip Code>."; end
+	if zipStorage == nil then return zipMissingMessage; end
 	
 	local handle = io.popen("weather-util "..zipStorage[1]);
 	local result = "\n"..handle:read("*a");
@@ -36,13 +40,13 @@ end
 
 function ParseForecastCommand(_command)
 
-	if stanzaUtils.IsGroupChat(_command) then return "This command cannot be used in group chat."; end
+	if stanzaUtils.IsGroupChat(_command) then return groupChatMessage; end
 	
 	local jid, host, resource = jidTool.SeperateFullJID(_command.sender["jid"]);
 	
 	local zipStorage = datamanager.load(jid, host, "weatherZip");
 	
-	if zipStorage == nil then return "I don't know your zip code! Set it with: @weatherset <Zip Code>."; end
+	if zipStorage == nil then return zipMissingMessage; end
 	
 	local handle = io.popen("weather-util -f "..zipStorage[1]);
 	local result = "\n"..handle:read("*a");
@@ -54,7 +58,7 @@ end
 
 function ParseWeatherSetCommand(_command)
 
-	if stanzaUtils.IsGroupChat(_command) then return "This command cannot be used in group chat."; end
+	if stanzaUtils.IsGroupChat(_command) then return groupChatMessage; end
   
 	if _command.param == nil then return "Missing zip code!"; end
 	

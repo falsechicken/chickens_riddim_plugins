@@ -25,14 +25,14 @@ local failResponses = {
 	"This is the first I am hearing of this..."
 };
 
-local CheckPermissions = function(_command)
+local CheckPermissions = function(_command, _permission)
   if _command.stanza.attr.type == "groupchat" then -- We need to check slightly differently if we are in group chat currently.
-    if perms.HasPermission(_command.sender["jid"], "command_linklist", BOT.config.permissions) then -- User has permission.;
+    if perms.HasPermission(_command.sender["jid"], _permission, BOT.config.permissions) then -- User has permission.;
       return true;
     end
     return false;
   else
-    if perms.HasPermission(jidTool.StripResourceFromJID(_command.sender["jid"]), "command_linklist", BOT.config.permissions) then -- User has permission.
+    if perms.HasPermission(jidTool.StripResourceFromJID(_command.sender["jid"]), _permission, BOT.config.permissions) then -- User has permission.
       return true;
     end
     return false;
@@ -46,22 +46,26 @@ function riddim.plugins.command_link(_bot)
 end
 
 function ProcessLinkCommand(_command)
-
-  if BOT.config.links == nil then _command:reply(tableUtils.GetRandomEntry(failResponses)); return false; end
-			
-    for title, link in pairs(BOT.config.links) do
-			if _command.param == title then
-				_command:reply(tableUtils.GetRandomEntry(successResponses)..": "..link);
-				return true;
+	if CheckPermissions(_command, "command_link") then
+		if BOT.config.links == nil then _command:reply(tableUtils.GetRandomEntry(failResponses)); return false; end
+				
+			for title, link in pairs(BOT.config.links) do
+				if _command.param == title then
+					_command:reply(tableUtils.GetRandomEntry(successResponses)..": "..link);
+					return true;
+				end
 			end
-		end
-	
-	_command:reply(tableUtils.GetRandomEntry(failResponses));
-	return false;
+		
+		_command:reply(tableUtils.GetRandomEntry(failResponses));
+		return false;
+	else
+		_command:reply("You are not authorized to run this command.");
+		return;
+	end
 end
 
 function ProcessLinkListCommand(_command)
-	if CheckPermissions(_command) then
+	if CheckPermissions(_command, "command_linklist") then
 		if BOT.config.links == nil then _command:reply("No link table in config!"); return false; end
 		
 		local linkList = "\n-- Link List --\n";

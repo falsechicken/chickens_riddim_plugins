@@ -12,14 +12,21 @@ local perms = require("riddim/ai_utils/permissions");
 local rebootQueued = false;
 local BOT = nil;
 
+local successResponses = {
+
+	"Catch ya on the flip side!",
+	"See you on the other side...",
+
+};
+
 local CheckPermissions = function(_command)
   if _command.stanza.attr.type == "groupchat" then -- We need to check slightly differently if we are in group chat currently.
-    if perms.HasPermission(_command.sender["jid"], "reboot", BOT.config.permissions) then -- User has permission.;
+    if perms.HasPermission(_command.sender["jid"], "command_reboot", BOT.config.permissions) then -- User has permission.;
       return true;
     end
     return false;
   else
-    if perms.HasPermission(jidTool.StripResourceFromJID(_command.sender["jid"]), "reboot", BOT.config.permissions) then -- User has permission.
+    if perms.HasPermission(jidTool.StripResourceFromJID(_command.sender["jid"]), "command_reboot", BOT.config.permissions) then -- User has permission.
       return true;
     end
     return false;
@@ -36,7 +43,7 @@ function Reboot(_command)
     
   if CheckPermissions(_command) == true then
     logMan.LogMessage("Reboot command called by ".._command.sender["jid"], 1);
-    _command:reply("Catch ya on the flip side!");
+    _command:reply(tableUtils.GetRandomEntry(successResponses));
     rebootQueued = true;
     return true;
   end

@@ -9,18 +9,29 @@ local jidTool = require("riddim/ai_utils/jid_tool");
 local stanzaUtils = require("riddim/ai_utils/stanzautils");
 local tableUtils = require("riddim/ai_utils/tableutils");
 
-function riddim.plugins.command_todo(bot)
-	bot:hook("commands/todoadd", ParseAddCommand);
-	bot:hook("commands/todoshow", ParseShowCommand);
-	bot:hook("commands/todorm", ParseRemoveCommand);
-  bot:hook("commands/todo", ParseHelpCommand);
+local BOT;
+
+local helpMessage = "\n"..[[- Todo Command Help -
+   - @todo - Show help message.
+   - @todoadd <Todo> - Add todo.
+   - @todorm <number> - Remove todo.
+   - @todoshow - Show todos.]];
+   
+local groupChatMessage = "This command cannot be used in group chat.";
+
+function riddim.plugins.command_todo(_bot)
+	_bot:hook("commands/todoadd", ParseAddCommand);
+	_bot:hook("commands/todoshow", ParseShowCommand);
+	_bot:hook("commands/todorm", ParseRemoveCommand);
+	_bot:hook("commands/todo", ParseHelpCommand);
+	BOT = _bot;
 end
 
 -- Command Parsers
 
 function ParseAddCommand(command)
   
-  if stanzaUtils.IsGroupChat(command) then return; end -- Ignore message from MUC rooms.
+  if stanzaUtils.IsGroupChat(command) then return groupChatMessage; end
   
 	if command.param == nil then return "Missing todo. @todo for help."; end
 	
@@ -36,13 +47,13 @@ function ParseAddCommand(command)
 		datamanager.store(jid, host, "todos", todoStorage);
 	end
 			
-	return "Got it.";
+	return "Todo added.";
 
 end
 
 function ParseShowCommand(command)
 
-  if stanzaUtils.IsGroupChat(command) then return; end -- Ignore message from MUC rooms.
+  if stanzaUtils.IsGroupChat(command) then return groupChatMessage; end
 	
 	local jid, host, resource = jidTool.SeperateFullJID(command.sender["jid"]);
 	
@@ -61,7 +72,7 @@ end
 
 function ParseRemoveCommand(command)
     
-  if stanzaUtils.IsGroupChat(command) then return; end -- Ignore message from MUC rooms.
+  if stanzaUtils.IsGroupChat(command) then return groupChatMessage; end
 	
 	if command.param == nil then return "Missing todo number. @todo for help."; end
 	
@@ -83,15 +94,9 @@ end
 
 function ParseHelpCommand(command)
   
-  if stanzaUtils.IsGroupChat(command) then return; end -- Ignore message from MUC rooms.
-  
-  local reply = "\n"..[[- Todo Command Help -
-   - @todo - Show help message.
-   - @todoadd <Todo> - Add todo.
-   - @todorm <number> - Remove todo.
-   - @todoshow - Show todos.]]
-  
-  command:reply(reply);
+  if stanzaUtils.IsGroupChat(command) then return groupChatMessage; end -- Ignore message from MUC rooms.
+    
+  return helpMessage;
 
 end
 
