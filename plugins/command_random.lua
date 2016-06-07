@@ -39,12 +39,18 @@ local CheckPermissions = function(_command)
 	end
 end
 
-local GenerateRandomNumber= function(_min, _max)
+local GenerateRandomNumberFromString= function(_min, _max)
+
+	math.randomseed(os.time());
 
 	local n1 = tonumber(_min);
 	local n2 = tonumber(_max);
 
 	if (type(n1) == "number" and type(n2) == "number") then
+		if (n1 <= 0 or n2 <= 0 or n1 > 2147483647 or n2 > 2147483647) then 
+			return "Number cannot be negitive or too large. Max size is 2,147,483,647."; end
+		if n2 < n1 then return "Max number cannot be smaller than the min number."; end
+		
 		return tostring(math.random(n1, n2));
 	else
 		return invalidArgumentMessage;
@@ -69,10 +75,10 @@ function ProcessRandomCommand(_command)
 			return tableUtils.GetRandomKey(_command.room.occupants);
 
 		elseif params[1] == "number" then
-			return GenerateRandomNumber(params[2], params[3]);
+			return GenerateRandomNumberFromString(params[2], params[3]);
 
 		elseif params[1] == "roll" then
-			return GenerateRandomNumber(1, params[2]);
+			return GenerateRandomNumberFromString(1, params[2]);
 		
 		else
 			return invalidArgumentMessage;
